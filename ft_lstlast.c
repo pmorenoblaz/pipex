@@ -50,22 +50,3 @@ t_comm_path	*ft_lstlast(t_comm_path *lst)
 	}
 	return (ant);
 }
-
-void	ft_lstprint(t_comm_path **lst)
-{
-	int			i;
-	t_comm_path	*ant;
-
-	if (lst == 0)
-		return ;
-	i = 0;
-	ant = *lst;
-	if (ft_lstsize(ant) > 1)
-	{
-		while (ant)
-		{
-			printf("%s\n", ant->comm[0]);
-			ant = ant->next;
-		}
-	}
-}

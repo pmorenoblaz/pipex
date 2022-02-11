@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pmoreno- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/11 15:42:16 by pmoreno-          #+#    #+#             */
+/*   Updated: 2022/02/11 15:42:19 by pmoreno-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
 char	*ft_envp_path(char **envp, int argc)
@@ -28,12 +40,9 @@ void	ft_check_path(char **l_paths, char *argv, t_comm_path **aux_l)
 	while (l_paths[j] != 0)
 	{
 		aux = ft_strjoin(l_paths[j], "/");
-		// printf("%s\n", aux);
 		aux_p = ft_strjoin(aux, argv);
-		// printf("%s\n", aux_p);
 		var->comm = ft_split(aux_p, ' ');
 		var->next = 0;
-		// printf("%s\n", aux_p);
 		i = access(var->comm[0], X_OK);
 		if (i == 0)
 		{
@@ -78,15 +87,10 @@ int	main(int argc, char **argv, char **envp)
 
 	if (argc >= 5)
 	{
-		// ft_open_infile(argv[1]);
 		path = ft_envp_path(envp, argc);
 		l_paths = ft_split(path, ':');
 		comm_dir = ft_accesslist(l_paths, argv, argc);
-		ft_lstprint(comm_dir);
-		//ft_pipex(argv, envp, comm_dir, argc);
-		//ft_first_part(comm_dir, envp, argv, argc);
-		ft_first_pipe(comm_dir, envp, argv);
-		//ft_first_pipe(comm_dir, envp, argc, argv);
+		ft_first_pipe(comm_dir[0], envp, argv);
 	}
 	return (0);
 }
