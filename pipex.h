@@ -1,9 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pmoreno- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/11 15:48:35 by pmoreno-          #+#    #+#             */
+/*   Updated: 2022/02/11 15:48:41 by pmoreno-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PIPEX_H
 # define PIPEX_H
 
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdarg.h>
+# include <stdio.h>
 # include <fcntl.h>
 
 //Commands list
@@ -23,13 +36,16 @@ t_comm_path		**ft_accesslist(char **l_paths, char **argv, int argc);
 char			*ft_envp_path(char **envp, int argc);
 void			ft_check_path(char **l_paths, char *argv, t_comm_path **aux_l);
 t_comm_path		**ft_accesslist(char **l_paths, char **argv, int argc);
+void			ft_valid_direction(t_comm_path	**comm_dir, char **argv);
 
 // ft_first_command.c
 void			ft_second_part(t_comm_path *act, int *fd1,
 					char **argv, char **envp);
-void			ft_first_pipe(t_comm_path *act, char **envp, char **argv);
+void			ft_first_part(t_comm_path *act, char **envp, char **argv);
+void			ft_infile(int fd, int fd1[2]);
 
 // Libft methods
+void			ft_putstr_fd(char *s, int fd);
 size_t			ft_strlen(const char *str);
 size_t			ft_strlcpy(char *dst, const char *src, size_t dstsize);
 int				ft_strncmp(const char *s1, const char *s2, size_t n);

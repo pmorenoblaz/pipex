@@ -85,12 +85,17 @@ int	main(int argc, char **argv, char **envp)
 	char		**l_paths;
 	t_comm_path	**comm_dir;
 
-	if (argc >= 5)
+	if (argc == 5)
 	{
 		path = ft_envp_path(envp, argc);
 		l_paths = ft_split(path, ':');
 		comm_dir = ft_accesslist(l_paths, argv, argc);
-		ft_first_pipe(comm_dir[0], envp, argv);
+		ft_first_part(comm_dir[0], envp, argv);
+	}
+	else
+	{
+		ft_putstr_fd("Usage: ./pipex infile \"cmd1\" \"cmd2\" outfile\n", 2);
+		exit(1);
 	}
 	return (0);
 }

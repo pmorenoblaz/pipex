@@ -12,7 +12,16 @@
 
 #include "pipex.h"
 
-void	ft_first_pipe(t_comm_path	*act, char **envp, char **argv)
+void	ft_infile(int fd, int fd1[2])
+{
+	dup2(fd, STDIN_FILENO);
+	close(fd);
+	close(fd1[0]);
+	dup2(fd1[1], STDOUT_FILENO);
+	close(fd1[1]);
+}
+
+void	ft_first_part(t_comm_path	*act, char **envp, char **argv)
 {
 	int			fd1[2];
 	int			fd;
@@ -26,12 +35,11 @@ void	ft_first_pipe(t_comm_path	*act, char **envp, char **argv)
 	{
 		arg1 = ft_split(argv[2], ' ');
 		fd = open(argv[1], O_RDONLY);
-		dup2(fd, STDIN_FILENO);
-		close(fd);
-		close(fd1[0]);
-		dup2(fd1[1], STDOUT_FILENO);
-		close(fd1[1]);
-		execve(act->comm[0], act->comm, envp);
+		if (fd < 0)
+			exit (1);
+		ft_infile(fd, fd1);
+		if (execve(act->comm[0], act->comm, envp) < 0)
+			exit(127);
 	}
 	else
 		ft_second_part(act->next, fd1, argv, envp);
@@ -48,6 +56,8 @@ void	ft_second_part(t_comm_path *act, int fd1[2], char **argv, char **envp)
 	close(fd1[1]);
 	pid = fork();
 	fd = open(argv[4], O_CREAT | O_WRONLY | O_TRUNC, 0666);
+	if (fd < 0)
+		exit (1);
 	if (pid == 0)
 	{
 		arg1 = ft_split(argv[3], ' ');
@@ -55,7 +65,8 @@ void	ft_second_part(t_comm_path *act, int fd1[2], char **argv, char **envp)
 		close(fd1[0]);
 		dup2(fd, STDOUT_FILENO);
 		close(fd);
-		execve(act->comm[0], act->comm, envp);
+		if (execve(act->comm[0], act->comm, envp) < 0)
+			exit (127);
 	}
 	else
 	{
