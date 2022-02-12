@@ -21,7 +21,7 @@ void	ft_infile(int fd, int fd1[2])
 	close(fd1[1]);
 }
 
-void	ft_first_part(t_comm_path	*act, char **envp, char **argv)
+void	ft_first_part(t_comm_path *act, char **envp, char **argv)
 {
 	int			fd1[2];
 	int			fd;
@@ -36,13 +36,16 @@ void	ft_first_part(t_comm_path	*act, char **envp, char **argv)
 		arg1 = ft_split(argv[2], ' ');
 		fd = open(argv[1], O_RDONLY);
 		if (fd < 0)
-			exit (1);
+			ft_file_error(argv[1]);
 		ft_infile(fd, fd1);
 		if (execve(act->comm[0], act->comm, envp) < 0)
 			exit(127);
 	}
 	else
-		ft_second_part(act->next, fd1, argv, envp);
+	{
+		act = act->next;
+		ft_second_part(act, fd1, argv, envp);
+	}
 	wait(&status);
 	wait(&status);
 }

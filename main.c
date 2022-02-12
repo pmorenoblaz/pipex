@@ -26,7 +26,7 @@ char	*ft_envp_path(char **envp, int argc)
 	return (0);
 }
 
-void	ft_check_path(char **l_paths, char *argv, t_comm_path **aux_l)
+void	ft_add_path(char **l_paths, char *argv, t_comm_path **aux_l)
 {
 	int			j;
 	char		*aux;
@@ -35,7 +35,7 @@ void	ft_check_path(char **l_paths, char *argv, t_comm_path **aux_l)
 	int			i;
 
 	j = 0;
-	i = 0;
+	i = -1;
 	var = malloc(sizeof(t_comm_path));
 	while (l_paths[j] != 0)
 	{
@@ -47,10 +47,11 @@ void	ft_check_path(char **l_paths, char *argv, t_comm_path **aux_l)
 		if (i == 0)
 		{
 			ft_lstadd_back(aux_l, var);
-			break ;
+			return ;
 		}
 		j++;
 	}
+	ft_comm_error(argv);
 }
 
 t_comm_path	**ft_accesslist(char **l_paths, char **argv, int argc)
@@ -58,6 +59,7 @@ t_comm_path	**ft_accesslist(char **l_paths, char **argv, int argc)
 	int			i;
 	t_comm_path	**aux_l;
 	t_comm_path	*var;
+	int			co;
 
 	i = 2;
 	l_paths += 0;
@@ -66,14 +68,15 @@ t_comm_path	**ft_accesslist(char **l_paths, char **argv, int argc)
 	while (i < argc - 1)
 	{
 		var = malloc(sizeof(t_comm_path));
-		if (access(argv[i], X_OK) == 0)
+		co = access(argv[i], X_OK);
+		if (co == 0)
 		{
 			var->comm = ft_split(argv[i], ' ');
 			var->next = 0;
 			ft_lstadd_back(aux_l, var);
 		}
 		else
-			ft_check_path(l_paths, argv[i], aux_l);
+			ft_add_path(l_paths, argv[i], aux_l);
 		i++;
 	}
 	return (aux_l);
