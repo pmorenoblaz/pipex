@@ -27,22 +27,28 @@ void	ft_first_part(t_comm_path *act, char **envp, char **argv)
 	int			fd;
 	int			status;
 	int			pid;
-	char		**arg1;
 
 	pipe(fd1);
 	pid = fork();
-	if (pid == 0)
+	
+	if (pid == -1)
+		perror("Error");
+	else if (pid == 0)
 	{
-		arg1 = ft_split(argv[2], ' ');
+		close(fd1[0]);
 		fd = open(argv[1], O_RDONLY);
-		if (fd < 0)
-			ft_file_error(argv[1]);
-		ft_infile(fd, fd1);
+		// ft_infile(fd, fd1);
+		dup2(fd, STDIN_FILENO);
+		close(fd);
+		dup2(fd1[1], STDOUT_FILENO);
+		close(fd1[1]);
+		write(2, "hola\n", 5);
 		if (execve(act->comm[0], act->comm, envp) < 0)
-			exit(127);
+			exit (127);
 	}
 	else
 	{
+		write(2, "hola", 4);
 		act = act->next;
 		ft_second_part(act, fd1, argv, envp);
 	}
@@ -54,20 +60,21 @@ void	ft_second_part(t_comm_path *act, int fd1[2], char **argv, char **envp)
 {
 	int		fd;
 	int		pid;
-	char	**arg1;
 
 	close(fd1[1]);
 	pid = fork();
 	fd = open(argv[4], O_CREAT | O_WRONLY | O_TRUNC, 0666);
 	if (fd < 0)
-		exit (1);
-	if (pid == 0)
+		exit (0);
+	if (pid == -1)
+		perror("Error");
+	else if (pid == 0)
 	{
-		arg1 = ft_split(argv[3], ' ');
 		dup2(fd1[0], STDIN_FILENO);
 		close(fd1[0]);
 		dup2(fd, STDOUT_FILENO);
 		close(fd);
+		write(2, "hola", 4);
 		if (execve(act->comm[0], act->comm, envp) < 0)
 			exit (127);
 	}

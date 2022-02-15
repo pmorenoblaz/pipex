@@ -41,8 +41,8 @@ void			ft_comm_error(char *str);
 t_comm_path		**ft_accesslist(char **l_paths, char **argv, int argc);
 char			*ft_envp_path(char **envp, int argc);
 void			ft_add_path(char **l_paths, char *argv, t_comm_path **aux_l);
-t_comm_path		**ft_accesslist(char **l_paths, char **argv, int argc);
 void			ft_valid_direction(t_comm_path	**comm_dir, char **argv);
+void			ft_command_validation(t_comm_path **comm_dir, char **argv);
 
 // ft_first_command.c
 void			ft_second_part(t_comm_path *act, int *fd1,

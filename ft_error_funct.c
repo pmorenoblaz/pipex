@@ -18,13 +18,15 @@ void	ft_file_error(char *str)
 	write(2, ": ", 2);
 	ft_putstr_fd(str, 2);
 	write(2, "\n", 1);
-	exit (0);
 }
 
 void	ft_comm_error(char *str)
 {
+	char	**s;
+
+	s = ft_split(str, ' ');
 	ft_putstr_fd("command not found", 2);
 	write(2, ": ", 2);
-	ft_putstr_fd(str, 2);
+	ft_putstr_fd(s[0], 2);
 	write(2, "\n", 1);
 }
