@@ -46,15 +46,13 @@ void	ft_add_path(char **l_paths, char *argv, t_comm_path **aux_l)
 		i = access(var->comm[0], X_OK);
 		if (i == 0)
 		{
-			var->ok = 1;
 			ft_lstadd_back(aux_l, var);
 			return ;
 		}
 		j++;
 	}
 	ft_lstadd_back(aux_l, var);
-	ft_comm_error(argv);
-	var->ok = 0;
+	ft_comm_error(argv, var);
 }
 
 void	ft_setcommand(t_comm_path *var, char	*arg)
@@ -101,14 +99,11 @@ int	main(int argc, char **argv, char **envp)
 	if (argc == 5)
 	{
 		path = ft_envp_path(envp, argc);
-		// ft_open_infile(argv[1]);
-		// ft_open_outfile(argv[argc - 1]);
 		fd = open(argv[1], O_RDONLY);
 		if (fd < 0)
 			ft_file_error(argv[1]);
 		close(fd);
-		fd = open(argv[argc -1], O_CREAT | O_WRONLY, 0666);
-		close(fd);
+		ft_open_outfile(argv[argc - 1]);
 		l_paths = ft_split(path, ':');
 		comm_dir = ft_accesslist(l_paths, argv, argc);
 		ft_command_validation(comm_dir, argv);

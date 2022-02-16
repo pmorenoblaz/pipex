@@ -20,10 +20,22 @@ void	ft_infile(int fd, int fd1[2])
 	close(fd1[1]);
 }
 
+void	ft_first_child(char **argv, int fd1[2], t_comm_path *act, char **envp)
+{
+	int	fd;
+
+	close(fd1[0]);
+	fd = open(argv[1], O_RDONLY);
+	if (fd < 0)
+		exit (0);
+	ft_infile(fd, fd1);
+	if (execve(act->comm[0], act->comm, envp) < 0)
+		exit (127);
+}
+
 void	ft_first_part(t_comm_path *act, char **envp, char **argv)
 {
 	int			fd1[2];
-	int			fd;
 	int			status;
 	int			pid;
 
@@ -32,15 +44,7 @@ void	ft_first_part(t_comm_path *act, char **envp, char **argv)
 	if (pid == -1)
 		perror("Error");
 	else if (pid == 0)
-	{
-		close(fd1[0]);
-		fd = open(argv[1], O_RDONLY);
-		if (fd < 0)
-			exit (0);
-		ft_infile(fd, fd1);
-		if (execve(act->comm[0], act->comm, envp) < 0)
-			exit (127);
-	}
+		ft_first_child(argv, fd1, act, envp);
 	else
 	{
 		act = act->next;

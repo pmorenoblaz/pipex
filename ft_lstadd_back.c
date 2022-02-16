@@ -16,6 +16,7 @@ void	ft_lstadd_back(t_comm_path **lst, t_comm_path *new)
 {
 	if (new == NULL)
 		return ;
+	new->ok = 1;
 	if (*lst == NULL)
 	{
 		*lst = new;

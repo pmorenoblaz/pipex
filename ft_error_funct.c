@@ -20,10 +20,11 @@ void	ft_file_error(char *str)
 	write(2, "\n", 1);
 }
 
-void	ft_comm_error(char *str)
+void	ft_comm_error(char *str, t_comm_path *var)
 {
 	char	**s;
 
+	var->ok = 0;
 	s = ft_split(str, ' ');
 	ft_putstr_fd("command not found", 2);
 	write(2, ": ", 2);
