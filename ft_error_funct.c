@@ -30,3 +30,29 @@ void	ft_comm_error(char *str)
 	ft_putstr_fd(s[0], 2);
 	write(2, "\n", 1);
 }
+
+void	ft_check_errors(t_comm_path **comm_dir)
+{
+	t_comm_path	*var;
+
+	var = comm_dir[0];
+	if (var->next->ok == 0)
+		exit (127);
+}
+
+void	ft_command_validation(t_comm_path **comm_dir, char **argv)
+{
+	t_comm_path	*var;
+
+	var = comm_dir[0];
+	if (var->comm == NULL)
+	{
+		if (var->next->comm == NULL)
+			exit (127);
+		else
+			var->comm = ft_split(argv[2], ' ');
+	}
+	else
+		if (var->next->comm == NULL)
+			var->next->comm = ft_split(argv[3], ' ');
+}

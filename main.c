@@ -46,6 +46,7 @@ void	ft_add_path(char **l_paths, char *argv, t_comm_path **aux_l)
 		i = access(var->comm[0], X_OK);
 		if (i == 0)
 		{
+			var->ok = 1;
 			ft_lstadd_back(aux_l, var);
 			return ;
 		}
@@ -53,23 +54,7 @@ void	ft_add_path(char **l_paths, char *argv, t_comm_path **aux_l)
 	}
 	ft_lstadd_back(aux_l, var);
 	ft_comm_error(argv);
-}
-
-void	ft_command_validation(t_comm_path **comm_dir, char **argv)
-{
-	t_comm_path	*var;
-
-	var = comm_dir[0];
-	if (var->comm == NULL)
-	{
-		if (var->next->comm == NULL)
-			exit (127);
-		else
-			var->comm = ft_split(argv[2], ' ');
-	}
-	else
-		if (var->next->comm == NULL)
-			var->next->comm = ft_split(argv[3], ' ');
+	var->ok = 0;
 }
 
 t_comm_path	**ft_accesslist(char **l_paths, char **argv, int argc)
@@ -90,6 +75,7 @@ t_comm_path	**ft_accesslist(char **l_paths, char **argv, int argc)
 		if (co == 0)
 		{
 			var->comm = ft_split(argv[i], ' ');
+			var->ok = 1;
 			var->next = 0;
 			ft_lstadd_back(aux_l, var);
 		}
@@ -98,6 +84,24 @@ t_comm_path	**ft_accesslist(char **l_paths, char **argv, int argc)
 		i++;
 	}
 	return (aux_l);
+}
+
+void	ft_open_infile(char *arc)
+{
+	int	fd;
+
+	fd = open(arc, O_RDONLY);
+	if (fd < 0)
+		ft_file_error(arc);
+	close(fd);
+}
+
+void	ft_open_outfile(char *arc)
+{
+	int	fd;
+
+	fd = open(arc, O_CREAT | O_WRONLY, 0666);
+	close(fd);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -120,6 +124,7 @@ int	main(int argc, char **argv, char **envp)
 		comm_dir = ft_accesslist(l_paths, argv, argc);
 		ft_command_validation(comm_dir, argv);
 		ft_first_part(comm_dir[0], envp, argv);
+		ft_check_errors(comm_dir);
 	}
 	else
 	{
