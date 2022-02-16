@@ -35,6 +35,8 @@ void	ft_first_part(t_comm_path *act, char **envp, char **argv)
 	{
 		close(fd1[0]);
 		fd = open(argv[1], O_RDONLY);
+		if (fd < 0)
+			exit (0);
 		ft_infile(fd, fd1);
 		if (execve(act->comm[0], act->comm, envp) < 0)
 			exit (127);

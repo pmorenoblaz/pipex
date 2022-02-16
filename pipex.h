@@ -34,6 +34,10 @@ void			ft_lstadd_back(t_comm_path **lst, t_comm_path *new);
 t_comm_path		*ft_lstlast(t_comm_path *lst);
 int				ft_lstsize(t_comm_path *lst);
 
+//ft_files.c
+void			ft_open_infile(char *arc);
+void			ft_open_outfile(char *arc);
+
 //ft_error_func.c
 void			ft_file_error(char *str);
 void			ft_comm_error(char *str);
@@ -51,7 +55,6 @@ void			ft_second_part(t_comm_path *act, int *fd1,
 					char **argv, char **envp);
 void			ft_first_part(t_comm_path *act, char **envp, char **argv);
 void			ft_infile(int fd, int fd1[2]);
-void			ft_file_error(char *str);
 
 // Libft methods
 void			ft_putstr_fd(char *s, int fd);

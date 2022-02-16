@@ -57,6 +57,13 @@ void	ft_add_path(char **l_paths, char *argv, t_comm_path **aux_l)
 	var->ok = 0;
 }
 
+void	ft_setcommand(t_comm_path *var, char	*arg)
+{
+	var->comm = ft_split(arg, ' ');
+	var->ok = 1;
+	var->next = 0;
+}
+
 t_comm_path	**ft_accesslist(char **l_paths, char **argv, int argc)
 {
 	int			i;
@@ -74,9 +81,7 @@ t_comm_path	**ft_accesslist(char **l_paths, char **argv, int argc)
 		co = access(argv[i], X_OK);
 		if (co == 0)
 		{
-			var->comm = ft_split(argv[i], ' ');
-			var->ok = 1;
-			var->next = 0;
+			ft_setcommand(var, argv[i]);
 			ft_lstadd_back(aux_l, var);
 		}
 		else
@@ -86,39 +91,23 @@ t_comm_path	**ft_accesslist(char **l_paths, char **argv, int argc)
 	return (aux_l);
 }
 
-void	ft_open_infile(char *arc)
-{
-	int	fd;
-
-	fd = open(arc, O_RDONLY);
-	if (fd < 0)
-		ft_file_error(arc);
-	close(fd);
-}
-
-void	ft_open_outfile(char *arc)
-{
-	int	fd;
-
-	fd = open(arc, O_CREAT | O_WRONLY, 0666);
-	close(fd);
-}
-
 int	main(int argc, char **argv, char **envp)
 {
 	char		*path;
 	char		**l_paths;
-	int			fd;
 	t_comm_path	**comm_dir;
+	int			fd;
 
 	if (argc == 5)
 	{
 		path = ft_envp_path(envp, argc);
+		// ft_open_infile(argv[1]);
+		// ft_open_outfile(argv[argc - 1]);
 		fd = open(argv[1], O_RDONLY);
 		if (fd < 0)
 			ft_file_error(argv[1]);
 		close(fd);
-		fd = open(argv[4], O_CREAT | O_WRONLY, 0666);
+		fd = open(argv[argc -1], O_CREAT | O_WRONLY, 0666);
 		close(fd);
 		l_paths = ft_split(path, ':');
 		comm_dir = ft_accesslist(l_paths, argv, argc);
