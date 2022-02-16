@@ -16,7 +16,6 @@ void	ft_infile(int fd, int fd1[2])
 {
 	dup2(fd, STDIN_FILENO);
 	close(fd);
-	close(fd1[0]);
 	dup2(fd1[1], STDOUT_FILENO);
 	close(fd1[1]);
 }
@@ -30,25 +29,18 @@ void	ft_first_part(t_comm_path *act, char **envp, char **argv)
 
 	pipe(fd1);
 	pid = fork();
-	
 	if (pid == -1)
 		perror("Error");
 	else if (pid == 0)
 	{
 		close(fd1[0]);
 		fd = open(argv[1], O_RDONLY);
-		// ft_infile(fd, fd1);
-		dup2(fd, STDIN_FILENO);
-		close(fd);
-		dup2(fd1[1], STDOUT_FILENO);
-		close(fd1[1]);
-		write(2, "hola\n", 5);
+		ft_infile(fd, fd1);
 		if (execve(act->comm[0], act->comm, envp) < 0)
 			exit (127);
 	}
 	else
 	{
-		write(2, "hola", 4);
 		act = act->next;
 		ft_second_part(act, fd1, argv, envp);
 	}
@@ -74,7 +66,6 @@ void	ft_second_part(t_comm_path *act, int fd1[2], char **argv, char **envp)
 		close(fd1[0]);
 		dup2(fd, STDOUT_FILENO);
 		close(fd);
-		write(2, "hola", 4);
 		if (execve(act->comm[0], act->comm, envp) < 0)
 			exit (127);
 	}

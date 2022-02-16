@@ -51,8 +51,6 @@ void	ft_add_path(char **l_paths, char *argv, t_comm_path **aux_l)
 		}
 		j++;
 	}
-	var->comm = NULL;
-	var->next = 0;
 	ft_lstadd_back(aux_l, var);
 	ft_comm_error(argv);
 }
@@ -67,11 +65,11 @@ void	ft_command_validation(t_comm_path **comm_dir, char **argv)
 		if (var->next->comm == NULL)
 			exit (127);
 		else
-			var->comm[0] = argv[2];
+			var->comm = ft_split(argv[2], ' ');
 	}
 	else
 		if (var->next->comm == NULL)
-			var->next->comm[0] = argv[3];
+			var->next->comm = ft_split(argv[3], ' ');
 }
 
 t_comm_path	**ft_accesslist(char **l_paths, char **argv, int argc)
@@ -107,7 +105,6 @@ int	main(int argc, char **argv, char **envp)
 	char		*path;
 	char		**l_paths;
 	int			fd;
-	// int			fd1;
 	t_comm_path	**comm_dir;
 
 	if (argc == 5)
@@ -122,9 +119,7 @@ int	main(int argc, char **argv, char **envp)
 		l_paths = ft_split(path, ':');
 		comm_dir = ft_accesslist(l_paths, argv, argc);
 		ft_command_validation(comm_dir, argv);
-		// write(2, "hola", 4);
 		ft_first_part(comm_dir[0], envp, argv);
-		// write(2, "hola", 4);
 	}
 	else
 	{
