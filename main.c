@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmoreno- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pmoreno- <pmoreno-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/11 15:42:16 by pmoreno-          #+#    #+#             */
-/*   Updated: 2022/02/11 15:42:19 by pmoreno-         ###   ########.fr       */
+/*   Updated: 2022/03/10 12:15:57 by pmoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,28 +31,27 @@ void	ft_add_path(char **l_paths, char *argv, t_comm_path **aux_l)
 	int			j;
 	char		*aux;
 	char		*aux_p;
-	t_comm_path	*var;
 	int			i;
+	char		**s;
 
-	j = 0;
+	j = -1;
 	i = -1;
-	var = malloc(sizeof(t_comm_path));
-	while (l_paths[j] != 0)
+	while (l_paths[++j] != 0)
 	{
 		aux = ft_strjoin(l_paths[j], "/");
 		aux_p = ft_strjoin(aux, argv);
-		var->comm = ft_split(aux_p, ' ');
-		var->next = 0;
-		i = access(var->comm[0], X_OK);
+		free(aux);
+		s = ft_split(aux_p, ' ');
+		free(aux_p);
+		i = access(s[0], X_OK);
 		if (i == 0)
 		{
-			ft_lstadd_back(aux_l, var);
+			ft_lstadd_back(aux_l, ft_lstnew(s));
 			return ;
 		}
-		j++;
+		free_variables_list(s);
 	}
-	ft_lstadd_back(aux_l, var);
-	ft_comm_error(argv, var);
+	ft_lstadd_back(aux_l, ft_lstnew_error(ft_split(argv, ' ')));
 }
 
 void	ft_setcommand(t_comm_path *var, char	*arg)
@@ -70,7 +69,6 @@ t_comm_path	**ft_accesslist(char **l_paths, char **argv, int argc)
 	int			co;
 
 	i = 2;
-	l_paths += 0;
 	aux_l = malloc(sizeof(t_comm_path *));
 	*aux_l = 0;
 	while (i < argc - 1)
@@ -81,9 +79,11 @@ t_comm_path	**ft_accesslist(char **l_paths, char **argv, int argc)
 		{
 			ft_setcommand(var, argv[i]);
 			ft_lstadd_back(aux_l, var);
+			free_variables_list(var->comm);
 		}
 		else
 			ft_add_path(l_paths, argv[i], aux_l);
+		free(var);
 		i++;
 	}
 	return (aux_l);
@@ -95,25 +95,25 @@ int	main(int argc, char **argv, char **envp)
 	char		**l_paths;
 	t_comm_path	**comm_dir;
 	int			fd;
+	int			e;
 
-	if (argc == 5)
+	e = 0;
+	comm_dir = 0;
+	if (argc != 5)
+		ft_args_error();
+	path = ft_envp_path(envp, argc);
+	fd = open(argv[1], O_RDONLY);
+	if (fd < 0)
 	{
-		path = ft_envp_path(envp, argc);
-		fd = open(argv[1], O_RDONLY);
-		if (fd < 0)
-			ft_file_error(argv[1]);
-		close(fd);
-		ft_open_outfile(argv[argc - 1]);
-		l_paths = ft_split(path, ':');
-		comm_dir = ft_accesslist(l_paths, argv, argc);
-		ft_command_validation(comm_dir, argv);
-		ft_first_part(comm_dir[0], envp, argv);
-		ft_check_errors(comm_dir);
+		e = 1;
+		ft_file_error(argv[1]);
 	}
-	else
-	{
-		ft_putstr_fd("Usage: ./pipex infile \"cmd1\" \"cmd2\" outfile\n", 2);
-		exit(1);
-	}
+	close(fd);
+	ft_open_outfile(argv[argc - 1]);
+	l_paths = ft_split(path, ':');
+	comm_dir = ft_accesslist(l_paths, argv, argc);
+	ft_command_validation(comm_dir, argv, e);
+	ft_first_part(comm_dir[0], envp, argv);
+	ft_final_part(comm_dir, l_paths);
 	return (0);
 }
