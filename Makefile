@@ -16,7 +16,7 @@ RM	= rm -f
 all:		$(NAME)
 
 .c.o:
-	$(GCC) $(CFLAGS) -c $< -o $(<:.c=.o)
+	$(GCC) $(CFLAGS) -c $< -o $@
 
 $(NAME):	$(OBJS)
 	$(CC) -o $(NAME) $?
